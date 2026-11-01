@@ -19,7 +19,7 @@ React 19 + Vite + recharts（已安装）+ express 后端。所有界面文字�
 - POST /api/similar {question, knowledge, subject} -> {questions:[{q, answer}]} 3 道同类题
 - GET /api/health
 - 真实 AI：调用 https://text.pollinations.ai/openai（无需密钥，OpenAI 兼容 chat/completions，body {model:'openai', messages, response_format 可不用}），
-  让模型只返回 JSON；服务端解析 JSON（要容错：去掉```json 围栏，提取第一个 {...}）。超时 25 秒，失败或解析失败则回退到 server/samples.js 中的高质量预置回答（source:'sample'）。
+  让模型只返回 JSON；解析 JSON（要容错：去掉```json 围栏，提取第一个 {...}）。超时 20 秒，失败或解析失败则回退到 src/ai/samples.js 中的高质量预置回答（source:'sample'）。AI 调用逻辑在 src/ai/core.js 中前后端共享；静态模式下由浏览器直接调用。
   预置样例覆盖 K12 数学(一元一次方程、勾股定理、二次函数)、语文(病句修改、古诗默写/赏析)、英语(时态填空、完形/语法) 至少 8 道，含完整分步讲解、知识点、答案、同类题；对未命中的题目，按科目返回通用的引导式模板。
 - 生产模式下同时托管 dist 静态文件（express.static + SPA fallback）。
 - 前端通过相对路径 /api/... 调用（vite dev 配置 proxy 到 3001）。

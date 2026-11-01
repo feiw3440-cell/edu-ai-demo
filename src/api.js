@@ -1,3 +1,12 @@
+const IS_STATIC = import.meta.env.VITE_STATIC === 'true'
+
+let staticAI = null
+
+function loadStaticAI() {
+  if (!staticAI) staticAI = import('./ai/core.js')
+  return staticAI
+}
+
 async function post(path, body) {
   let response
   try {
@@ -29,18 +38,41 @@ async function post(path, body) {
 }
 
 export function explainQuestion({ question, subject }) {
+  if (IS_STATIC) {
+    return loadStaticAI().then((ai) => ai.explainQuestion({ question, subject }))
+  }
   return post('/api/explain', { question, subject })
 }
 
 export function gradeAnswer({ question, studentAnswer, subject, referenceAnswer }) {
+  if (IS_STATIC) {
+    return loadStaticAI().then((ai) =>
+      ai.gradeAnswer({ question, studentAnswer, subject, referenceAnswer }),
+    )
+  }
   return post('/api/grade', { question, studentAnswer, subject, referenceAnswer })
 }
 
 export function similarQuestions({ question, knowledge, subject }) {
+  if (IS_STATIC) {
+    return loadStaticAI().then((ai) =>
+      ai.similarQuestions({ question, knowledge, subject }),
+    )
+  }
   return post('/api/similar', { question, knowledge, subject })
 }
 
 export async function checkHealth() {
+  if (IS_STATIC) {
+    const { samples } = await import('./ai/samples.js')
+    return {
+      ok: true,
+      service: 'edu-ai-demo-static',
+      samples: samples.length,
+      time: new Date().toISOString(),
+    }
+  }
+
   const response = await fetch('/api/health')
   if (!response.ok) throw new Error('服务不可用')
   return response.json()
