@@ -32,6 +32,7 @@ function createInitialState() {
     view: 'home',
     params: {},
     isMember: false,
+    memberReason: null,
     aiUsedToday: 0,
     aiDate: todayStr(),
     mistakes: initialMistakes,
@@ -63,6 +64,8 @@ function normalizeState(saved) {
   }
   if (!Array.isArray(merged.records)) merged.records = base.records
   if (typeof merged.isMember !== 'boolean') merged.isMember = false
+  if (merged.memberReason !== 'limit') merged.memberReason = null
+  if (merged.isMember) merged.memberReason = null
   if (typeof merged.aiUsedToday !== 'number') merged.aiUsedToday = 0
   if (merged.aiDate !== todayStr()) {
     merged.aiDate = todayStr()
@@ -111,7 +114,7 @@ export function AppProvider({ children }) {
       commit((current) => {
         if (current.role === role) return current
         const tab = role === 'parent' ? 'weekly' : 'home'
-        return { ...current, role, tab, view: tab, params: {} }
+        return { ...current, role, tab, view: tab, params: {}, memberReason: null }
       })
     },
     [commit],
@@ -119,7 +122,13 @@ export function AppProvider({ children }) {
 
   const goTab = useCallback(
     (tab) => {
-      commit((current) => ({ ...current, tab, view: tab, params: {} }))
+      commit((current) => ({
+        ...current,
+        tab,
+        view: tab,
+        params: {},
+        memberReason: tab === 'member' ? current.memberReason : null,
+      }))
     },
     [commit],
   )
@@ -138,7 +147,34 @@ export function AppProvider({ children }) {
 
   const setMember = useCallback(
     (value = true) => {
-      commit((current) => ({ ...current, isMember: Boolean(value) }))
+      commit((current) => ({
+        ...current,
+        isMember: Boolean(value),
+        memberReason: value ? null : current.memberReason,
+      }))
+    },
+    [commit],
+  )
+
+  const setMemberReason = useCallback(
+    (reason = null) => {
+      commit((current) => ({
+        ...current,
+        memberReason: reason === 'limit' ? 'limit' : null,
+      }))
+    },
+    [commit],
+  )
+
+  const goMember = useCallback(
+    (reason = null) => {
+      commit((current) => ({
+        ...current,
+        memberReason: reason === 'limit' ? 'limit' : null,
+        view: 'member',
+        tab: 'member',
+        params: {},
+      }))
     },
     [commit],
   )
@@ -277,6 +313,8 @@ export function AppProvider({ children }) {
       goTab,
       navigate,
       setMember,
+      setMemberReason,
+      goMember,
       consumeAI,
       addMistake,
       toggleMastered,
@@ -293,6 +331,8 @@ export function AppProvider({ children }) {
       goTab,
       navigate,
       setMember,
+      setMemberReason,
+      goMember,
       consumeAI,
       addMistake,
       toggleMastered,

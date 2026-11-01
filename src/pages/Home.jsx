@@ -31,6 +31,7 @@ export default function Home() {
     consumeAI,
     navigate,
     goTab,
+    goMember,
   } = useApp()
   const { toast, showToast } = useToast()
   const [subject, setSubject] = useState('数学')
@@ -75,7 +76,7 @@ export default function Home() {
     }
     if (!isMember && aiRemaining <= 0) {
       showToast('今日免费答疑次数已用完')
-      navigate('member', {}, { tab: 'member' })
+      goMember('limit')
       return
     }
 
@@ -86,7 +87,7 @@ export default function Home() {
       setLoading(false)
       if (!allowed) {
         showToast('今日免费答疑次数已用完')
-        navigate('member', {}, { tab: 'member' })
+        goMember('limit')
         return
       }
       navigate('explain', { question: text, subject, result }, { tab: 'home' })
