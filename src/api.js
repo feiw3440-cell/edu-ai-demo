@@ -32,8 +32,8 @@ export function explainQuestion({ question, subject }) {
   return post('/api/explain', { question, subject })
 }
 
-export function gradeAnswer({ question, studentAnswer, subject }) {
-  return post('/api/grade', { question, studentAnswer, subject })
+export function gradeAnswer({ question, studentAnswer, subject, referenceAnswer }) {
+  return post('/api/grade', { question, studentAnswer, subject, referenceAnswer })
 }
 
 export function similarQuestions({ question, knowledge, subject }) {

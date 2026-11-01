@@ -327,7 +327,8 @@ app.post('/api/grade', async (req, res) => {
     return res.status(400).json({ error: '请提供学生答案 studentAnswer' })
   }
 
-  const sample = findSample({ question, subject })
+  const referenceAnswer = trimText(req.body?.referenceAnswer, 500)
+  const sample = referenceAnswer ? { answer: referenceAnswer } : findSample({ question, subject })
 
   try {
     const data = await callAI(
@@ -350,6 +351,12 @@ ${sample ? `参考答案：${sample.answer}` : ''}
 
     if (!isValidGrade(data)) {
       throw new Error('AI 返回的批改结构不完整')
+    }
+
+    // 有参考答案且与学生答案完全一致时，以确定性判分为准（避免小模型误判）
+    if (sample) {
+      const local = gradeWithSample(sample, studentAnswer)
+      if (local.score === 100 && Number(data.score) < 90) return res.json(local)
     }
 
     return res.json({

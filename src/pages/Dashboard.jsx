@@ -220,7 +220,7 @@ export default function Dashboard() {
             <ResponsiveContainer width="100%" height={210}>
               <ComposedChart
                 data={view.data}
-                margin={{ top: 10, right: 4, left: -20, bottom: 0 }}
+                margin={{ top: 10, right: 4, left: 0, bottom: 0 }}
               >
                 <defs>
                   <linearGradient id="aiBar" x1="0" y1="0" x2="0" y2="1">
@@ -292,7 +292,7 @@ export default function Dashboard() {
             <ResponsiveContainer width="100%" height={132}>
               <LineChart
                 data={view.retentionData}
-                margin={{ top: 8, right: 12, left: -26, bottom: 0 }}
+                margin={{ top: 8, right: 12, left: 0, bottom: 0 }}
               >
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#eef1f8" />
                 <XAxis

@@ -140,7 +140,7 @@ export default function Parent() {
         <div className="card chart-card">
           <div className="chart-box">
             <ResponsiveContainer width="100%" height={168}>
-              <BarChart data={STUDY_DATA} margin={{ top: 8, right: 4, left: -26, bottom: 0 }}>
+              <BarChart data={STUDY_DATA} margin={{ top: 8, right: 4, left: 0, bottom: 0 }}>
                 <defs>
                   <linearGradient id="studyBar" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor="#7c93f5" />
@@ -180,7 +180,7 @@ export default function Parent() {
         <div className="card chart-card">
           <div className="chart-box">
             <ResponsiveContainer width="100%" height={158}>
-              <LineChart data={ACCURACY_DATA} margin={{ top: 10, right: 8, left: -22, bottom: 0 }}>
+              <LineChart data={ACCURACY_DATA} margin={{ top: 10, right: 8, left: 0, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#eef1f8" />
                 <XAxis
                   dataKey="week"

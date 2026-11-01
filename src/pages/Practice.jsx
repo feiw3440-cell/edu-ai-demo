@@ -116,6 +116,7 @@ export default function Practice() {
           question: items[index].q,
           studentAnswer: answers[index],
           subject,
+          referenceAnswer: items[index].answer,
         })
         collected[index] = graded
         setResults([...collected])
