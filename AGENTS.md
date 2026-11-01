@@ -24,3 +24,21 @@ React 19 + Vite + recharts（已安装）+ express 后端。所有界面文字�
 - 生产模式下同时托管 dist 静态文件（express.static + SPA fallback）。
 - 前端通过相对路径 /api/... 调用（vite dev 配置 proxy 到 3001）。
 - 前端需显示 AI 回答的来源标签（「AI 实时生成」/「示例回答」），并有 loading 状态（骨架/打字动画）。
+
+## 前端结构与数据约定
+文件：src/main.jsx, src/App.jsx（外壳：手机外框、顶部栏、角色切换、底部 tab、简单路由）, src/styles.css, src/store.js（全局状态 + localStorage 持久化，用 React Context 或简单 hook）, src/api.js（fetch 封装，/api/explain|grade|similar，失败时抛错并在 UI 友好提示）, src/data/mock.js（所有模拟数据）, src/pages/*.jsx。
+store 状态：
+- role: 'student'|'parent'；tab 当前页；
+- isMember(bool，默认 false)；aiUsedToday(number，按日期重置，免费用户每日上限 FREE_LIMIT=3，每次调用 /api/explain 成功展示讲解后 +1；用完后再次提问不请求后端，直接跳转「会员引导页」)；
+- mistakes: [{id, question, subject, knowledge, steps, answer, studentAnswer, addedAt, mastered(bool)}]；
+- plan: 今日任务 [{id, title, type:'review'|'practice'|'read', knowledge, minutes, done}]，根据错题的知识点自动生成（每个有错题的知识点生成「复习 xx」和「同类题练习 3 道」任务，另有 1 个固定「每日一读」）；无错题时展示默认的示例计划；
+- records：练习批改记录 [{id, question, knowledge, score, correct, at}]。
+每个页面右下或页头有「重置演示数据」入口（在「我的」页）。
+设计要求：现代、精致、有层次感；组件有轻微动画（页面切换淡入、按钮按压反馈、步骤逐步展开）；空状态有插画式 emoji + 引导文案；所有可点按钮都要有实际行为（演示原型不允许有死按钮）。
+
+## 学生端流程（核心闭环）
+1. 首页「学习」：问候 + 今日学习进度环 + 剩余 AI 答疑次数徽标（「今日剩余 2/3 次」，会员显示「会员无限次」）；科目选择（数学/语文/英语）；题目输入框 + 「拍题」按钮（模拟：点击弹出「模拟拍照识别」动画 1.2 秒，然后自动填入一道示例题）+「提交」；下方「试试这些题」示例题 chip（来自 samples 的 9 道题，点击填入）；最近记录。
+2. 讲解页（可作为首页下的子视图/全屏页）：显示题目、来源标签（AI 实时生成/示例回答）、知识点标签；分步讲解以卡片逐步展开：先显示第 1 步标题，点击「下一步」展开，每步展示 content，并在下方用淡色气泡展示 hint（「想一想：…」）；最后有「查看答案」（默认折叠）；底部按钮：「加入错题本」（成功后 toast，按钮变已加入，按 knowledge 归类）、「做同类题练习」（跳转练习页）、「再问一题」。
+3. 错题本页：顶部统计（错题总数、知识点数、已掌握数）；按知识点分组的可折叠列表（组头显示知识点名+数量+掌握率进度条）；每题可展开看讲解步骤与答案，有「标记已掌握」「重做」「删除」；空状态有引导；预置 3 道示例错题（不同知识点）让页面首次打开不空。
+4. 计划页：日期、今日任务清单（可勾选完成，进度环），任务来源标注（「来自错题：xx」）；点击练习类任务进入练习页。
+5. 练习页（同类题练习 + AI 批改）：调用 /api/similar 获取 3 道同类题（加载骨架屏），每题一个答题输入框，「提交批改」调用 /api/grade 逐题批改，展示得分环、对错、点评、订正；全部完成后显示总分+「AI 学习建议」小结，错题可一键加入错题本，完成后自动勾选对应计划任务并写入 records。
