@@ -117,7 +117,7 @@ export default function Mine() {
         </div>
       </section>
 
-      <p className="version-text">AI 学习助手 · 产品经理作品集 Demo v1.0</p>
+      <p className="version-text">教育 AI 学习助手 Demo v1.0</p>
 
       <Toast toast={toast} />
     </div>

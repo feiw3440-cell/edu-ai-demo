@@ -311,7 +311,7 @@ export default function Prd() {
   return (
     <div className="page-inner prd-page">
       <div className="prd-topline">
-        <span className="tag tag-subject">作品集文档</span>
+        <span className="tag tag-subject">产品需求文档</span>
         <span className="muted">内容来自仓库根目录 PRD.md</span>
       </div>
 
